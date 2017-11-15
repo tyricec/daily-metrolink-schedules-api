@@ -14,13 +14,13 @@ const omit = require('lodash/omit');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(
-  'mongodb://localhost:27017/gtfs',
+  process.env.MONGODB_URI || 'mongodb://localhost:27017/gtfs',
   { useMongoClient: true },
 );
 
 const getRoutes = async () => {
   const routes = await gtfs.getRoutes({
-   agency_key: 'metrolink',
+    agency_key: 'metrolink',
   });
   return routes;
 };
@@ -60,10 +60,13 @@ const getSchedules = async (route_id) => {
   );
   const dayTypes = servicesForToday.map(service => {
     const validDays = pickBy(service, value => value === 1)
-     const days = keys(validDays);
-     return days
-       .reduce((acc, next) => acc.slice(0, 1).concat(next), [])
-       .map(day => capitalize(day)).join(' - ');
+    const days = keys(validDays);
+    return {
+      id: service.service_id,
+      display: days
+        .reduce((acc, next) => acc.slice(0, 1).concat(next), [])
+        .map(day => capitalize(day)).join(' - ')
+    };
   });
 
   const stopTimesWithStopInfo = stopTimes.map(stopTime => omit({
@@ -83,10 +86,19 @@ const getSchedules = async (route_id) => {
       stopTime => stopTime.stop_sequence,
     ),
   );
-  
-  const scheduleInfo = ['route_id', 'trip_headsign', 'trip_short_name', 'destination', 'table'];
+
+  const scheduleInfo = [
+    'route_id',
+    'trip_headsign',
+    'trip_short_name',
+    'destination',
+    'dayType',
+    'table'
+  ];
+
   const schedules = trips.map(trip => pick({
     ...trip,
+    dayType: dayTypes.find(dayType => dayType.id === trip.service_id),
     table: sortedStopTimesByTrip[trip.trip_id],
   }, scheduleInfo));
   const result = {

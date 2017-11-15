@@ -1,10 +1,14 @@
 {
   "name": "daily-metrolink-schedules-api",
+  "engine": {
+    "node": ">=8.9.1"
+  },
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "import": "node ./utils/importGTFS"
+    "import": "node ./utils/importGTFS",
+    "heroku-postbuild": "npm run import"
   },
   "dependencies": {
     "cors": "^2.8.4",
