@@ -13,7 +13,7 @@ The Daily Metrolink Schedules API provides endpoints for the following:
 - Routes served by Metrolink
 - Schedules of the trips for a given route for the current day
 
-This api is used by the Daily Metrolink Schedules app for display of the schedules in a vertical sliced table.
+This api is used by the [Daily Metrolink Schedules app](https://github.com/tyricec/daily-metrolink-schedules) for display of the schedules in a vertical sliced table.
 
 ## Getting Started
 
